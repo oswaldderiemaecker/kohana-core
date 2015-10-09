@@ -107,6 +107,10 @@ class Kohana_LogTest extends Unittest_TestCase
 		$this->assertAttributeSame(array(), '_writers', $logger);
 	}
 
+	/**
+	 * Provider for test_logging
+	 *
+	 */
 	public function provider_logging()
 	{
 		return [
@@ -189,6 +193,35 @@ class Kohana_LogTest extends Unittest_TestCase
 	}
 
 	/**
+	 * Tests \Psr\Log\AbstractLogger
+	 *
+	 * @test
+	 * @dataProvider provider_logging
+	 */
+	public function test_logging_abstract_logger($method, array $levels, $message)
+	{
+		$expected_level = $levels[2];
+		$expected = array($expected_level, $message);
+		$actual = NULL;
+
+		// initialize and configure stub logger
+		$stub_logger = $this->getMockBuilder('Psr\Log\AbstractLogger')
+			->setMethods(['log'])
+			->disableArgumentCloning()
+			->getMock();
+		$stub_logger->method('log')->will($this->returnCallback(
+			function ($level, $message, array $context = []) use (&$actual) {
+				$actual = array($level, $message);
+			}));
+
+		// Log with one of the specialized level methods
+		$stub_logger->$method($message);
+
+		// Assert
+		$this->assertSame($expected, $actual);
+	}
+
+	/**
 	 * A fuzzy log message assertion with line and time deltas
 	 * 
 	 * @param array $expected expected log message
@@ -213,6 +246,7 @@ class Kohana_LogTest extends Unittest_TestCase
 		$this->assertInternalType(gettype($expected['time']), $actual['time']);
 		$this->assertEquals($expected['time'], $actual['time'], '', $time_delta);
 	}
+
 }
 
 /**
