@@ -20,11 +20,10 @@
 		"source":   "http://github.com/kohana/core"
 	},
 	"require": {
-		"php":        ">=5.3.3"
+		"php":        ">=5.4.0"
 	},
 	"require-dev": {
-    "phpunit/phpunit": "3.7.*",
-		"kohana/unittest":     "3.3.*@dev",
+		"kohana/unittest":     "3.4.*@dev",
 		"kohana/koharness":    "*@dev"
 	},
 	"suggest": {
